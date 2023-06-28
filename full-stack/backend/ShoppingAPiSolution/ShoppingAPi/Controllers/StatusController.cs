@@ -1,28 +1,23 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace ShoppingAPi.Controllers;
+namespace ShoppingApi.Controllers;
 
-//Two rules for controller classes
-// 1. mush be public
-// must be a controller based
 public class StatusController : ControllerBase
 {
 
-    private readonly IlookupTheStatus _statusLookup;
+    private readonly ILookupTheStatus _statusLookup;
 
-    public StatusController(IlookupTheStatus statusLookup)
+    public StatusController(ILookupTheStatus statusLookup)
     {
         _statusLookup = statusLookup;
     }
 
-    //GET /status
-
-    //attribute (can also be 'HttpPost')
+    // GET /status
     [HttpGet("/status")]
-
     public async Task<ActionResult> GetTheStatus()
     {
+
         GetStatusResponse response = await _statusLookup.GetCurrentStatusAsync();
-        return Ok(response); //200 Ok.
+        return Ok(response); // 200 Ok.
     }
 }

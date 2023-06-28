@@ -1,6 +1,6 @@
-﻿namespace ShoppingAPi.Controllers;
+﻿namespace ShoppingApi.Controllers;
 
-public interface IlookupTheStatus
+public interface ILookupTheStatus
 {
     Task<GetStatusResponse> GetCurrentStatusAsync();
 }
