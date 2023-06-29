@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
-import { provideState } from '@ngrx/store';
 import { CounterComponent } from './counter.component';
+import { provideState } from '@ngrx/store';
 import { FEATURE_NAME, reducers } from './state';
 
 export const COUNTER_ROUTES: Routes = [

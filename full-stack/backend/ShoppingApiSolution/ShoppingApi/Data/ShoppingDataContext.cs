@@ -12,4 +12,6 @@ public class ShoppingDataContext : DbContext
 
     public DbSet<ShoppingListEntity> ShoppingList { get; set; }
 
+
+
 }
