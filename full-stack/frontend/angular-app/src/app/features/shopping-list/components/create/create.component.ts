@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormControl,
@@ -6,6 +6,8 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { Store } from '@ngrx/store';
+import { ListEvents } from '../../state/list.actions';
 
 @Component({
   selector: 'app-create',
@@ -15,7 +17,7 @@ import {
   styleUrls: ['./create.component.css'],
 })
 export class CreateComponent {
-  @Output() itemAdded = new EventEmitter<string>();
+  constructor(private store: Store) {}
 
   form = new FormGroup({
     description: new FormControl<string>('', {
@@ -33,11 +35,15 @@ export class CreateComponent {
   }
 
   addItem() {
-    // to do
     if (this.form.valid) {
-      this.itemAdded.emit(this.description.value);
-    } else {
-      console.log(this.form.controls.description.errors);
+      const payload = {
+        description: this.form.controls.description.value,
+      };
+      this.store.dispatch(
+        ListEvents.itemAdded({
+          payload,
+        }),
+      );
     }
   }
 }
