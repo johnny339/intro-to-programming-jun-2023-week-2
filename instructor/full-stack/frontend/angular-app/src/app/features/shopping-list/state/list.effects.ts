@@ -5,19 +5,34 @@ import { map, mergeMap, switchMap, tap } from 'rxjs';
 import { ShoppingFeatureEvents } from './feature.actions';
 import { ShoppingListEntity } from './list.reducer';
 import { ListDocuments, ListEvents } from './list.actions';
-
+import { environment } from 'src/environments/environment';
 @Injectable()
 export class ListEffects {
+  readonly baseUrl = environment.apiUrl;
+  markPurchased$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(ListEvents.itemMarkedPurchased),
+      mergeMap((originalAction) =>
+        this.http
+          .put(
+            this.baseUrl +
+              `completed-shopping-items/${originalAction.payload.id}`,
+            originalAction.payload,
+          )
+          .pipe(
+            map(() => ({ ...originalAction.payload, purchased: true })),
+            map((updatedItem) => ListDocuments.item({ payload: updatedItem })),
+          ),
+      ),
+    );
+  });
   // when an item is added -> send it to the api -> item
   addItem$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(ListEvents.itemAdded),
       mergeMap(({ payload }) =>
         this.http
-          .post<ShoppingListEntity>(
-            'http://localhost:1338/shopping-list',
-            payload,
-          )
+          .post<ShoppingListEntity>(this.baseUrl + 'shopping-list', payload)
           .pipe(map((payload) => ListDocuments.item({ payload }))),
       ),
     );
@@ -29,10 +44,9 @@ export class ListEffects {
     return this.actions$.pipe(
       ofType(ShoppingFeatureEvents.entered),
       switchMap(() =>
+        // using switchmap here because it is "cancellable"
         this.http
-          .get<{ data: ShoppingListEntity[] }>(
-            'http://localhost:1338/shopping-list',
-          )
+          .get<{ data: ShoppingListEntity[] }>(this.baseUrl + 'shopping-list')
           .pipe(
             map((response) => response.data),
             map((payload) => ListDocuments.list({ payload })),
